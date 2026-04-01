@@ -1,10 +1,10 @@
 from rest_framework import routers
 from django.urls import path, include
-from apps.payments.views import PaymentViewSets
+from apps.payments.views import PaymentAdminViewSet
 
 router = routers.DefaultRouter()
-router.register('payments', PaymentViewSets)
+router.register('payments', PaymentAdminViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('admin/', include(router.urls))
 ]

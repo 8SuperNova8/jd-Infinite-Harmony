@@ -3,6 +3,7 @@ from datetime import datetime
 from apps.rooms.models import Room, RoomType
 from apps.rooms.serializers import RoomSerializer, RoomTypeSerializer
 from .mixins import AvailableRoomsMixin
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 #Perfil Publico
 class RoomTypeViewSet (
@@ -11,6 +12,7 @@ class RoomTypeViewSet (
     ):
     serializer_class = RoomTypeSerializer
     queryset = RoomType.objects.all()
+    permission_classes = [AllowAny]
 
 class RoomViewSet (
     viewsets.GenericViewSet,
@@ -18,6 +20,7 @@ class RoomViewSet (
     ):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
+    permission_classes = [AllowAny]
 
 #***************************
 
@@ -25,6 +28,7 @@ class RoomViewSet (
 class RoomTypeAdminViewset (viewsets.ModelViewSet):
     serializer_class= RoomTypeSerializer
     queryset = RoomType.objects.all()
+    permission_classes = [IsAdminUser]
 
     
 class RoomAdminViewSet(
@@ -33,3 +37,4 @@ class RoomAdminViewSet(
     ):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
+    permission_classes = [IsAdminUser]
