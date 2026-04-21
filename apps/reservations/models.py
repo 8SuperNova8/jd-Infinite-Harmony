@@ -1,14 +1,7 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db.models import Sum
 from django.db import models
 from apps.rooms.models import Room
 import uuid
-
 
 class Reservation (models.Model):
     check_in = models.DateField()
@@ -26,7 +19,30 @@ class Reservation (models.Model):
         default= 'confirmed')
     total_amount = models.DecimalField(
         max_digits=10,
-        decimal_places=2)
+        decimal_places=2
+    )
+    extra_charges = models.DecimalField( #este se adicionó
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+    #-----------------------
+    #Nota: property solo se puede usar dentro de la clase modelo
+    @property #atributo calculado, no guardado. solo existe en el código cuando tú accedes al objeto.
+    def total_real(self):
+        return self.total_amount + self.extra_charges
+
+    @property
+    def total_paid(self):
+        #suma todos los amount de payments de la reserva, y luego toma del diccionario el valor de total.
+        paid = self.payments.aggregate(total=Sum('amount'))['total']
+        return paid or 0 #devuelve 0 si paid es none
+
+    @property
+    def balance(self):
+        return self.total_real - self.total_paid
+    #-------------------------------------
+
     guest_name = models.CharField(max_length=100)
     guest_email = models.CharField(max_length=100)
     guest_phone = models.CharField(max_length=20)

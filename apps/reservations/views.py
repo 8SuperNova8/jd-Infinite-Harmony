@@ -1,14 +1,14 @@
 from datetime import date
 from django_filters.rest_framework import DjangoFilterBackend
+from .services.send_mail import send_reservation_mail
 from .filters import ReservationFilter
-from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from apps.accounts.permissions import IsSuperUser, IsReceptionist
 from apps.reservations.models import Reservation
-from apps.reservations.serializers import ReservationSerializer, ChangeStatusSerializer
+from apps.reservations.serializers import ReservationSerializer, ReservationPublicDetailSerializer, ReservationAdminSerializer ,ChangeStatusSerializer, ExtraChargesSerializer
 from django.db import transaction
 from .throttles import ReservationThrottle
 
@@ -18,9 +18,15 @@ class ReservationViewSet (#para publico
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    serializer_class = ReservationSerializer
     queryset = Reservation.objects.all()
     permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ReservationSerializer
+        elif self.action == 'cancel':
+            return None
+        return ReservationPublicDetailSerializer
     
     #valida por token
     lookup_field = 'token' #modifica el endpoint de consulta de pk por token
@@ -30,13 +36,12 @@ class ReservationViewSet (#para publico
     #aplica el limite de peticion de solo reserva esto esta en settings
     throttle_classes = [ReservationThrottle] 
 
-    #no permite duplicados db
-    @transaction.atomic
+    @transaction.atomic # valida que todo se ejecute sin error sino hace rollback
     def perform_create(self, serializer):
-        serializer.save()
+        reservation = serializer.save()
+        send_reservation_mail(reservation)    
 
-    # --- ENDPOINTS PARA CANCELAR 
-    #para publico 
+    #--- ENDPOINT PARA CANCELAR reserva (confirmed -> cancelled)
     @action(detail=True, methods=['patch'])
     def cancel(self, request, token=None):
         reservation = self.get_object()
@@ -57,17 +62,29 @@ class AdminReservationViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    serializer_class = ReservationSerializer
+    #serializer_class = ReservationSerializer
     queryset = Reservation.objects.all()
     permission_classes = [IsReceptionist | IsSuperUser]
 
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ReservationSerializer
+        elif self.action == 'change_status':
+            return ChangeStatusSerializer
+        elif self.action == 'extra_charges':
+            return ExtraChargesSerializer
+        return ReservationAdminSerializer
+
+    #configuracion de los filtros traidos de /filters
     filter_backends = [DjangoFilterBackend]
     filterset_class = ReservationFilter
 
-    
+    @transaction.atomic # valida que todo se ejecute sin error sino hace rollback
+    def perform_create(self, serializer):
+        reservation = serializer.save()
+        send_reservation_mail(reservation)   
 
-    # para Admin
-    # confirmed ->chek_in o -> no_show
+    # endpoint para cancelar (confirmed ->chek_in o -> no_show)
     @action(detail=True, methods=['patch'], serializer_class=ChangeStatusSerializer)
     def change_status (self, request, pk=None):
         reservation = self.get_object()
@@ -75,9 +92,6 @@ class AdminReservationViewSet(
         serializer = ChangeStatusSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         new_status = serializer.validated_data['status']
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
 
         allowed = {
             'confirmed' :['checked_in', 'no_show', 'cancelled'],
@@ -94,6 +108,17 @@ class AdminReservationViewSet(
             'id':reservation.id,
             'status': reservation.status
         }, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['patch'])
+    def extra_charges(self, request, pk=None):
+        reservation = self.get_object()
+        serializer = ExtraChargesSerializer(data= request.data)
+        serializer.is_valid(raise_exception=True)
+
+        reservation.extra_charges = serializer.validated_data['extra_charges']
+        reservation.save()
+
+        return Response({'message':'Data successfully updated'}, status=status.HTTP_200_OK)
 
 '''
     

@@ -31,7 +31,6 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Updated Password'}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'])
-    
     def promote(self, request, pk=None):
         user = self.get_object()
         user.is_superuser = True
@@ -44,7 +43,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         return Response({'detail':'promoted to superuser'}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'])
-    @extend_schema(request=None, responses={200:None})
+    #@extend_schema(request=None, responses={200:None})
     def demote(self, request, pk=None):
         user = self.get_object()
         user.is_superuser = False

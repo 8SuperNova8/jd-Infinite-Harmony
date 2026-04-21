@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from apps.reservations.models import Reservation
+from .services.reservation_value import reservation_value
 
-#formulario de reserva
+#creacion de reserva para admin y public
 class ReservationSerializer (serializers.ModelSerializer):
+    guest_email = serializers.EmailField()
     total_amount = serializers.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -10,23 +12,24 @@ class ReservationSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = '__all__'
+        fields = ['check_in', 'check_out', 'guest_name', 'guest_email', 'guest_phone', 'guest_document', 'room', 'total_amount' ]
 
     def create(self, validated_data):
         room = validated_data['room']
         check_in = validated_data['check_in']
         check_out = validated_data['check_out']
 
-        nights = (check_out- check_in).days
-        price = room.room_type.base_price
-        total = nights * price
-
-        validated_data['total_amount'] = total
+        validated_data['total_amount'] = reservation_value(room, check_in, check_out)
 
         return super().create(validated_data)
     
     #valida si existe reserva 
     def validate (self, data):
+        check_in= data['check_in']
+        check_out = data['check_out']
+        #valida que fecha de salida no sea menor que entrada
+        if check_out <= check_in:
+            raise serializers.ValidationError('Check-out must be after check-in')
 
         #verifica si la habitacion tiene alguna reserva para esa fecha 
         overlapping = Reservation.objects.filter(
@@ -42,6 +45,23 @@ class ReservationSerializer (serializers.ModelSerializer):
             )
         return data
     
+#detalle para public 
+class ReservationPublicDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ['check_in', 'check_out', 'reservation_date', 'status', 'guest_name', 'total_amount']
+
+#detalle para Admin
+class ReservationAdminSerializer(serializers.ModelSerializer):
+    total_real = serializers.ReadOnlyField()
+    total_paid = serializers.ReadOnlyField()
+    balance = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Reservation
+        fields = "__all__"
+  
+
 class ChangeStatusSerializer(serializers.Serializer):
     status = serializers.CharField()
 
@@ -53,6 +73,22 @@ class ChangeStatusSerializer(serializers.Serializer):
         if received_fields != alowed_fields:
             raise serializers.ValidationError('Only the "status" field can be modified')
         return data
+    
+class ExtraChargesSerializer(serializers.Serializer):
+    extra_charges = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        min_value=0
+    )
+
+'''
+class AddExtraChargesSerializer(serializers.Serializer):
+    extra_charges= serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+'''
     
 '''    
 #consulta por cedula 
