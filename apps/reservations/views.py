@@ -41,7 +41,9 @@ class ReservationViewSet (#para publico
     @transaction.atomic # valida que todo se ejecute sin error sino hace rollback
     def perform_create(self, serializer):
         reservation = serializer.save()
-        send_reservation_mail(reservation)    
+
+        if settings.SEND_EMAILS:
+            send_reservation_mail(reservation)     
 
     #--- ENDPOINT PARA CANCELAR reserva (confirmed -> cancelled)
     @action(detail=True, methods=['patch'])

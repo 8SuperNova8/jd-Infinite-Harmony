@@ -1,7 +1,11 @@
 from django.core.mail import send_mail
+from django.conf import settings #envio solo en desarrollo valida la variable en core/settings.py
 
 #configuración para enviar correo despues de creada la reserva
 def send_reservation_mail(reservation):
+    if not getattr(settings, "SEND_EMAILS", True):
+        return
+
     send_mail(
         subject='Confirmación de Reserva',
         message=f"""
