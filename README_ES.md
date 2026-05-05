@@ -4,19 +4,17 @@
 - [Español](readme_es.md) (estás aquí)
 ---
 
- # <center>🏨 Sistema de Reservas API </center>
+ <h1 aling='center'>🏨 Sistema de Reservas API </h1>
 
 API backend para una plataforma de gestión y reservas hoteleras desarrollada con **Django REST Framework**.  
 El proyecto fue diseñado con mentalidad de entorno real, aplicando separación entre endpoints **públicos vs administrativos**, autenticación **JWT**, control de acceso por roles (**RBAC**), limitación de peticiones (**rate limiting**) y validación de reglas de negocio para reservas, disponibilidad y pagos.
 
----
-
 ## 🌍 Demo en Producción (Deploy en Render)
 
-### 📌 Documentación Swagger (API Docs)
+#### 📌 Documentación Swagger (API Docs)
 https://sistema-de-reservas-4827.onrender.com/api/docs/
 
-### 📌 Documentación Redoc
+#### 📌 Documentación Redoc
 https://sistema-de-reservas-4827.onrender.com/api/schema/redoc/
 
 ---
@@ -33,7 +31,6 @@ https://sistema-de-reservas-4827.onrender.com/api/schema/redoc/
 - **DRF Throttling / Rate Limiting**
 - **Deploy en Render**
 
----
 
 ## 🎯 Funcionalidades Principales
 
@@ -81,14 +78,10 @@ Esto evita tener vistas sobrecargadas (“fat views”) y facilita mantenimiento
 
 Este proyecto está diseñado con prácticas de seguridad similares a un entorno productivo.
 
----
-
 ## ✅ Autenticación (JWT)
 
 Autenticación implementada con **JWT** usando SimpleJWT.  
 Los endpoints administrativos requieren tokens válidos.
-
----
 
 ## ✅ Control de Acceso por Roles (RBAC)
 
@@ -100,13 +93,9 @@ Permisos personalizados para controlar acceso:
 
 El rol recepcionista se maneja mediante **Django Groups**.
 
----
-
 ## ✅ Migración Automática para Grupo Receptionist
 
 Se creó una migración que genera automáticamente el grupo `Receptionist`, garantizando consistencia en producción.
-
----
 
 ## ✅ Separación de Endpoints Públicos vs Administrativos
 
@@ -128,8 +117,6 @@ los endpoints públicos NO exponen CRUD completo.
 
 Esto evita que un usuario externo pueda modificar o eliminar recursos sensibles.
 
----
-
 ## ✅ Transiciones Seguras de Estado (Status Flow Control)
 
 El cambio de estado de una reserva se controla con un endpoint dedicado que valida transiciones permitidas:
@@ -138,8 +125,6 @@ El cambio de estado de una reserva se controla con un endpoint dedicado que vali
 - `checked_in → finished`
 
 Cualquier transición inválida es rechazada, evitando inconsistencias en la base de datos.
-
----
 
 ## ✅ Protección Anti-Spam (Rate Limiting)
 
@@ -163,8 +148,6 @@ check_out__gt = requested_check_in
 
 Esto evita que dos reservas ocupen la misma habitación en fechas cruzadas.
 
----
-
 ## ✅ Cálculo Financiero en Reservas (Propiedades Calculadas)
 
 Las reservas incluyen propiedades calculadas:
@@ -175,7 +158,6 @@ Las reservas incluyen propiedades calculadas:
 
 Esto permite escenarios reales como minibar, daños, cargos extra, etc.
 
----
 ## ✅ Service Layer para Pagos
 
 El módulo de pagos usa un service layer para validar reglas de negocio:
@@ -185,8 +167,6 @@ El módulo de pagos usa un service layer para validar reglas de negocio:
 - no permite sobrepago por encima del balance
 
 Esto mejora escalabilidad y limpieza del código.
-
----
 
 ## 🔍 Sistema de Filtros (Admin)
 
@@ -199,8 +179,6 @@ El listado de reservas en admin soporta filtros avanzados con django-filter:
 
 Ejemplo:
 `GET /api/admin/reservations/?status=confirmed&room_id=10`
-
----
 
 ## 📍 Endpoints Principales
 
@@ -226,7 +204,6 @@ Cambio de estado de reserva
 Pagos  
 `/api/admin/payments/`
 
----
 ## 🔑 Autenticación (JWT)
 Login  
 `POST /api/auth/login/`
@@ -300,6 +277,6 @@ Demuestra prácticas reales de ingeniería backend:
 
 ## 📬 Autor
 
-Desarrollado por Verónica sierra
+Desarrollado por Verónica sierra  
 Backend Developer | Django & REST API
 

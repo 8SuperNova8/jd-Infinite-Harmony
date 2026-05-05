@@ -5,19 +5,17 @@
 
 ---
 
-# <center>🏨 Reservation System API </center>
+ <h1 aling='center'>🏨 Reservation System API </h1>
 
 Backend API for a hotel reservation and management platform built with **Django REST Framework**.  
 Designed with a real-world architecture mindset, including **public vs admin separation**, **JWT authentication**, **role-based access control**, **rate limiting**, and strong **business rules validation** for reservations, room availability, and payments.
 
----
-
 ## 🌍 Live Demo (Deployed on Render)
 
-### 📌 Swagger API Docs
+#### 📌 Swagger API Docs
 https://sistema-de-reservas-4827.onrender.com/api/docs/
 
-### 📌 Redoc Documentation
+#### 📌 Redoc Documentation
 https://sistema-de-reservas-4827.onrender.com/api/schema/redoc/
 
 ---
@@ -33,8 +31,6 @@ https://sistema-de-reservas-4827.onrender.com/api/schema/redoc/
 - **django-filter** (Advanced Filtering)
 - **DRF Throttling / Rate Limiting**
 - **Render Deployment**
-
----
 
 ## 🎯 Key Features
 
@@ -79,15 +75,11 @@ This avoids "fat views" and improves testability and maintainability.
 
 This API is designed with production-like security practices.
 
----
-
 ## ✅ Authentication (JWT)
 
 Authentication is handled with **JWT tokens** using SimpleJWT.
 
 Admins must authenticate using JWT to access protected endpoints.
-
----
 
 ## ✅ Role-Based Access Control (RBAC)
 
@@ -99,13 +91,9 @@ Custom permission classes enforce user roles:
 
 Receptionist role is managed using Django Groups.
 
----
-
 ## ✅ Receptionist Role Migration
 
 A migration automatically creates the `Receptionist` group, ensuring consistent environments in production.
-
----
 
 ## ✅ Public vs Admin Endpoint Separation
 
@@ -125,8 +113,6 @@ A key security design decision: **public endpoints do not expose full CRUD acces
 
 This prevents exposing sensitive operations to unauthenticated users.
 
----
-
 ## ✅ Safe Reservation Status Transitions
 
 Reservation status updates are controlled through a dedicated endpoint that enforces valid transitions:
@@ -137,8 +123,6 @@ Reservation status updates are controlled through a dedicated endpoint that enfo
 Invalid transitions are rejected.
 
 This prevents inconsistent reservation states and improves system integrity.
-
----
 
 ## ✅ Anti-Spam Protection (Rate Limiting)
 
@@ -161,7 +145,6 @@ check_out__gt = requested_check_in
 ```
 This prevents multiple reservations from occupying the same room during overlapping dates.
 
----
 ## ✅ Financial Tracking (Computed Properties)
 
 Reservations support computed billing logic:
@@ -171,8 +154,6 @@ Reservations support computed billing logic:
 - balance = remaining amount
 
 This allows real-world scenarios like minibar charges, damages, or additional services.
-
----
 
 ## ✅ Service Layer (Payments)
 
@@ -184,7 +165,6 @@ Payments use a dedicated service layer to enforce business rules:
 
 This demonstrates scalable backend design.
 
----
 
 ## 🔍 Filtering System (Admin)
 
@@ -220,7 +200,6 @@ Change reservation status
 Payments  
 `/api/admin/payments/`
 
----
 ## 🔑 Authentication Usage (JWT)
 Login  
 `POST /api/auth/login/`
@@ -287,5 +266,5 @@ It demonstrates real backend engineering practices:
 ---
 ## 📬 Author
 
-Developed by Verónica Sierra
+Developed by Verónica Sierra  
 Backend Developer | Django & REST API
