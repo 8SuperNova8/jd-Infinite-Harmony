@@ -196,57 +196,57 @@ Admin reservation listing supports advanced filtering using django-filter:
 - date range overlap
 
 Example:
-` GET /api/admin/reservations/?status=confirmed&room_id=10
+`GET /api/admin/reservations/?status=confirmed&room_id=10`
 
 ---
 ## 📍 Main Endpoints
 ### Public API
-Room availability
-` GET /api/public/rooms/available/?room_type=3&check_in=2026-03-28&check_out=2026-03-30
-Create reservation
-` POST /api/public/reservations/
-Cancel reservation (token-based)
-` PATCH /api/public/reservations/{token}/cancel/
+Room availability  
+`GET /api/public/rooms/available/?room_type=3&check_in=2026-03-28&check_out=2026-03-30`  
+Create reservation  
+`POST /api/public/reservations/`  
+Cancel reservation (token-based)  
+`PATCH /api/public/reservations/{token}/cancel/`
 
 ### Admin API (JWT Protected)
-Rooms CRUD
-` /api/admin/rooms/
-RoomTypes CRUD
-` /api/admin/roomtypes/
-Reservations management
-` /api/admin/reservations/
-Change reservation status
-` PATCH /api/admin/reservations/{id}/change_status/
-Payments
-` /api/admin/payments/
+Rooms CRUD  
+`/api/admin/rooms/`  
+RoomTypes CRUD  
+`/api/admin/roomtypes/`  
+Reservations management  
+`/api/admin/reservations/`  
+Change reservation status  
+`PATCH /api/admin/reservations/{id}/change_status/`  
+Payments  
+`/api/admin/payments/`
 
 ---
 ## 🔑 Authentication Usage (JWT)
-Login
-` POST /api/auth/login/
+Login  
+`POST /api/auth/login/`
 
 Body:
 ```
-    {
-        "email": "admin@mail.com",
-        "password": "password"
-    }
+{
+    "email": "admin@mail.com",
+    "password": "password"
+}
 ```
 
 Response:
 ```
-    {
-        "access": "...",
-        "refresh": "..."
-    }
+{
+    "access": "...",
+    "refresh": "..."
+}
 ```
 
 ---
 # 🛠️ Local Setup
 ### Clone project
 ```
-    git clone <repo-url>
-    cd Sistema_de_Reservas
+git clone <repo-url>
+cd Sistema_de_Reservas
 ```
 ### Create virtual environment
 ```
@@ -254,7 +254,7 @@ python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 ### Install dependencies
-` pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 ### Configure environment variables
 Create .env file:
@@ -264,9 +264,9 @@ SECRET_KEY=your_secret_key
 DATABASE_URL=postgres://user:password@localhost:5432/dbname
 ```
 ### Run migrations
-` python manage.py migrate
+`python manage.py migrate`
 ### Run server
-` python manage.py runserver
+`python manage.py runserver`
 
 ---
 # 📌 Why this project stands out
@@ -274,14 +274,14 @@ This is not a basic CRUD API.
 
 It demonstrates real backend engineering practices:
 
-✅ JWT authentication and RBAC permissions
-✅ public/admin endpoint separation
-✅ throttling (rate limiting) to prevent abuse
-✅ validated reservation state transitions
-✅ double-booking prevention using overlap queries
-✅ payment service layer with business rules validation
-✅ clean architecture inspired by SOLID principles
-✅ production-ready documentation (Swagger + Redoc)
+✅ JWT authentication and RBAC permissions  
+✅ public/admin endpoint separation  
+✅ throttling (rate limiting) to prevent abuse  
+✅ validated reservation state transitions  
+✅ double-booking prevention using overlap queries  
+✅ payment service layer with business rules validation  
+✅ clean architecture inspired by SOLID principles  
+✅ production-ready documentation (Swagger + Redoc)  
 ✅ deployed and accessible live on Render
 
 ---
